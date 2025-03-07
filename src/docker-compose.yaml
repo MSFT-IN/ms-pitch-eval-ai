@@ -40,7 +40,7 @@ x-airflow-common:
 
 
 services:
-  #Airflow 메타데이터 저장소, Dags, 태스크 실행상태 등 저장장
+  #Airflow 메타데이터 저장소, Dags, 태스크 실행상태 등 저장
   postgres:
     image: postgres:13
     environment:
@@ -55,7 +55,7 @@ services:
       retries: 5
     restart: always
 
-  #Celery 메세지 브로커 역할. 비동기 작업 처리 지원원
+  #Celery 메세지 브로커 역할. Celery Worker와 DAG간 태스크 매새지 전달달
   redis:
     image: redis:latest
     expose:
@@ -67,6 +67,7 @@ services:
       retries: 50
     restart: always
 
+  #Airflow 웹UI 제공
   airflow-webserver:
     <<: *airflow-common
     command: webserver
@@ -83,6 +84,7 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
+  #DAG 스케줄링 및 태스크 실행 관리 
   airflow-scheduler:
     <<: *airflow-common
     command: scheduler
@@ -96,7 +98,7 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-
+  #Celery 통해 DAG의 태스크 실행행
   airflow-worker:
     <<: *airflow-common
     command: celery worker
@@ -116,6 +118,8 @@ services:
       airflow-init:
         condition: service_completed_successfully
 
+
+  #Sensor 태스크들 비동기적으로 할 수 있게 해좀좀
   airflow-triggerer:
     <<: *airflow-common
     command: triggerer
@@ -129,7 +133,8 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-
+        
+  # Airflow 초기화
   airflow-init:
     <<: *airflow-common
     entrypoint: /bin/bash
