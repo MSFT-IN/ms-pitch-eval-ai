@@ -1,37 +1,46 @@
----
 version: '3'
+
+# 앵커 정의: 공통 설정으로 아래 서비스에서 재사용 할라구함
 x-airflow-common:
   &airflow-common
-  # In order to add custom dependencies or upgrade provider packages you can use your extended image.
-  # Comment the image line, place your Dockerfile in the directory where you placed the docker-compose.yaml
-  # and uncomment the "build" line below, Then run `docker-compose build` to build the images.
+
+  # 에어플로우 도커이미지 버전 기본값 2.5.1임임
   image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.5.1}
-  # build: .
+
+  # 환경 변수 설정
   environment:
     &airflow-common-env
-    AIRFLOW__CORE__EXECUTOR: ${AIRFLOW__CORE__EXECUTOR}
-    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}
-    AIRFLOW__CORE__SQL_ALCHEMY_CONN: ${AIRFLOW__CORE__SQL_ALCHEMY_CONN}
-    AIRFLOW__CELERY__RESULT_BACKEND: ${AIRFLOW__CELERY__RESULT_BACKEND}
-    AIRFLOW__CELERY__BROKER_URL: ${AIRFLOW__CELERY__BROKER_URL}
-    AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}
-    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: ${AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION}
-    AIRFLOW__CORE__LOAD_EXAMPLES: ${AIRFLOW__CORE__LOAD_EXAMPLES}
-    AIRFLOW__API__AUTH_BACKENDS: ${AIRFLOW__API__AUTH_BACKENDS}
-    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS}
+    AIRFLOW__CORE__EXECUTOR: ${AIRFLOW__CORE__EXECUTOR}  # Airflow Executor: 병렬처리위해 셀러리 Executor ㄴㄴ썻음
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: ${AIRFLOW__DATABASE__SQL_ALCHEMY_CONN}  # 데이터베이스 연결 URI
+    AIRFLOW__CORE__SQL_ALCHEMY_CONN: ${AIRFLOW__CORE__SQL_ALCHEMY_CONN}  # (Deprecated) 동일한 데이터베이스 연결 설정
+    AIRFLOW__CELERY__RESULT_BACKEND: ${AIRFLOW__CELERY__RESULT_BACKEND}  # Celery 작업 결과 저장소 
+    AIRFLOW__CELERY__BROKER_URL: ${AIRFLOW__CELERY__BROKER_URL}  # Celery 브로커 URL (예: Redis)
+    AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW__CORE__FERNET_KEY}  # Airflow에서 암호화에 사용되는 Fernet 키
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: ${AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION}  # DAG 초기 상태 설정 (일시정지 여부)
+    AIRFLOW__CORE__LOAD_EXAMPLES: ${AIRFLOW__CORE__LOAD_EXAMPLES}  # 예제 DAG 로드 여부
+    AIRFLOW__API__AUTH_BACKENDS: ${AIRFLOW__API__AUTH_BACKENDS}  # Airflow API 인증 백엔드 설정
+    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS}  # 추가 파이썬 패키지 설치 (requirements.txt에 추가할 패키지)
+
+  # 호스트 디렉터리와 컨테이너의 볼륨 연결
   volumes:
-    - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
-    - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
-    - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
-  user: "${AIRFLOW_UID:-50000}:0"
+    - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags  # DAG 파일 디렉터리 연결
+    - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs  # 로그 파일 저장 디렉터리 연결
+    - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins  # Airflow 플러그인 디렉터리 연결
+
+  # 컨테이너 내에서 사용자 권한 설정
+  user: "${AIRFLOW_UID:-50000}:0"  # 기본 사용자 UID를 50000으로 설정 (호스트와 권한 일치)
+
+  # 컨테이너 시작 시 의존성 설정
   depends_on:
     &airflow-common-depends-on
     redis:
-      condition: service_healthy
+      condition: service_healthy  # Redis 서비스가 정상적으로 작동할 때까지 대기
     postgres:
-      condition: service_healthy
+      condition: service_healthy  # Postgres 서비스가 정상적으로 작동할 때까지 대기
+
 
 services:
+  #Airflow 메타데이터 저장소, Dags, 태스크 실행상태 등 저장장
   postgres:
     image: postgres:13
     environment:
@@ -46,6 +55,7 @@ services:
       retries: 5
     restart: always
 
+  #Celery 메세지 브로커 역할. 비동기 작업 처리 지원원
   redis:
     image: redis:latest
     expose:
@@ -99,8 +109,6 @@ services:
       retries: 5
     environment:
       <<: *airflow-common-env
-      # Required to handle warm shutdown of the celery workers properly
-      # See https://airflow.apache.org/docs/docker-stack/entrypoint.html#signal-propagation
       DUMB_INIT_SETSID: "0"
     restart: always
     depends_on:
@@ -125,7 +133,7 @@ services:
   airflow-init:
     <<: *airflow-common
     entrypoint: /bin/bash
-    # yamllint disable rule:line-length
+
     command:
       - -c
       - |
@@ -207,15 +215,13 @@ services:
     environment:
       <<: *airflow-common-env
       CONNECTION_CHECK_MAX_COUNT: "0"
-    # Workaround for entrypoint issue. See: https://github.com/apache/airflow/issues/16252
+
     command:
       - bash
       - -c
       - airflow
 
-  # You can enable flower by adding "--profile flower" option e.g. docker-compose --profile flower up
-  # or by explicitly targeted on the command line e.g. docker-compose up flower.
-  # See: https://docs.docker.com/compose/profiles/
+
   flower:
     <<: *airflow-common
     command: celery flower
