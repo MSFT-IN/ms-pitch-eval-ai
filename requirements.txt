@@ -1,0 +1,17 @@
+# Airflow 및 관련 Provider
+apache-airflow==2.5.1
+apache-airflow-providers-microsoft-azure
+apache-airflow-providers-celery
+apache-airflow-providers-redis
+
+# Azure Blob Storage
+azure-storage-blob==12.16.0
+
+# 오디오 및 시각화
+librosa==0.10.0.post2
+matplotlib==3.7.1
+numpy==1.24.3
+
+# 쓸일있을것같음
+pandas==1.5.3
+requests==2.31.0
