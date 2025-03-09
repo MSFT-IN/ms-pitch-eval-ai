@@ -172,5 +172,5 @@ cython_debug/
 
 # Test and dummy files
 evalai_venv/
-.mp3
-.wav
+*.mp3
+*.wav
