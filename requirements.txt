@@ -1,3 +1,5 @@
 dotenv
 requests
 openai
+tiktoken
+azure.cognitiveservices.speech

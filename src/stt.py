@@ -8,15 +8,19 @@ import urllib.request
 import json
 import ssl
 
+
+
 # Load environment variables
 dotenv.load_dotenv()
+
 AUDIO_FILE_PATH = os.getenv("AUDIO_FILE_PATH")
 AUDIO_FILE_NAME = os.getenv("AUDIO_FILE_NAME")
-AOAI_ENDPOINT_GPT = os.getenv("AOAI_ENDPOINT_GPT")
-AOAI_ENDPOINT_GPT_0513 = os.getenv("AOAI_ENDPOINT_GPT_0513")
-AOAI_ENDPOINT_WHISPER = os.getenv("AOAI_ENDPOINT_WHISPER")
-AOAI_API_KEY = os.getenv("AOAI_API_KEY")
 
+AOAI_API_KEY = os.getenv("AOAI_API_KEY")
+AOAI_ENDPOINT_GPT = os.getenv("AOAI_ENDPOINT_GPT")
+AOAI_ENDPOINT_WHISPER = os.getenv("AOAI_ENDPOINT_WHISPER")
+AOAI_DEPLOYMENT_NAME_WHISPER = os.getenv("AOAI_DEPLOYMENT_NAME_WHISPER")
+AOAI_DEPLOYMENT_NAME_GPT = os.getenv("AOAI_DEPLOYMENT_NAME_GPT")
 
 
 
@@ -41,7 +45,7 @@ def call_whisper(audio_file_path):
 
     response = aoai_client_whisper.audio.transcriptions.create(
         file = open(audio_file_path, "rb"),            
-        model = "whisper"
+        model = AOAI_DEPLOYMENT_NAME_WHISPER
     )
 
     result = response.text
@@ -77,9 +81,30 @@ def call_gpt(system_prompt, user_prompt, max_tokens = 500):
 
     response = aoai_client_gpt.chat.completions.create(
         messages = gpt_input,            
-        model = "gpt-4o",
+        model = AOAI_DEPLOYMENT_NAME_GPT,
         max_tokens = max_tokens
     )
 
     result = response.choices[0].message.content
     return result
+
+
+
+def __main__():
+
+    # User Input
+    pitch_purpose = "Microsoft Copilot for Security"
+
+    # STT with Whisper
+    stt_result = call_whisper(AUDIO_FILE_PATH + AUDIO_FILE_NAME)
+
+    # Refine transcription with GPT-4o
+    system_message = "STT 퀄리티 개선을 위해 잘못 변환된 단어만을 수정해줘."
+    
+    refined_text = ""
+    for chunk in chunks:
+        user_message = f"{pitch_purpose}라는 피치 목적을 고려해, 텍스트 중 STT 과정에서 잘못 변환된 것 같은 단어만 수정해. 그 외의 내용은 절대 바꾸지 마. 텍스트: " + chunk
+        refined_text = refined_text + call_gpt(system_message, user_message, 1000)
+    
+    # Use Bing Search for RAG based Feedback
+
