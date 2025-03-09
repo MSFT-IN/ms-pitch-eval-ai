@@ -169,3 +169,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Test and dummy files
+for_test/
+evalai_venv/
