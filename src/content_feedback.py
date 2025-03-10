@@ -3,6 +3,15 @@ import tiktoken
 from base_call import call_gpt
 
 def call_gpt_for_feedback(text_chunk):
+    """
+    Function to call GPT for feedback on the text chunk.
+
+    Args:
+        text_chunk (str): Text chunk to provide feedback on.
+    Returns:
+        feedback (str): Feedback on the text chunk.
+    """
+
     max_tokens = 1000
 
     system_prompt = "https://learn.microsoft.com/ko-kr/의 최신 정보를 기반으로, 틀린 내용을 지적해줘."
@@ -29,6 +38,15 @@ def grounding_w_bing():
 
 
 def run_feedback_flow(chunks):
+    """
+    Function to run the feedback flow on the text chunks.
+    
+    Args:
+        chunks (list): List of text chunks to provide feedback on.
+    Returns:
+        feedback_text (str): Feedback on the text chunks.
+    """
+    
     feedback_text = ""
 
     for chunk in chunks:

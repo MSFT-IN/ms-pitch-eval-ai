@@ -10,6 +10,16 @@ AUDIO_FILE_NAME = os.getenv("AUDIO_FILE_NAME")
 
 
 def call_gpt_for_refinement(pitch_purpose, stt_chunk):
+    """
+    Function to call GPT for refining the STT transcription.
+
+    Args:
+        pitch_purpose (str): Purpose of the pitch.
+        stt_chunk (str): STT chunk to refine.
+    Returns:
+        refined_text (str): Refined STT chunk.
+    """
+    
     max_tokens = 1000
 
     system_prompt = "STT 퀄리티 개선을 위해 잘못 변환된 단어만을 수정해줘."
@@ -29,6 +39,15 @@ def call_gpt_for_refinement(pitch_purpose, stt_chunk):
 
 
 def refine_stt(pitch_purpose, recognized_chunks):
+    """
+    Function to refine the STT transcription.
+    Args:
+        pitch_purpose (str): Purpose of the pitch.
+        recognized_chunks (list): List of recognized text chunks.
+    Returns:
+        refined_text (str): Refined STT transcription.
+        refined_chunks (list): List of refined text chunks.
+    """
     refined_text = ""
     refined_chunks = []
 
@@ -42,6 +61,14 @@ def refine_stt(pitch_purpose, recognized_chunks):
 
 
 def run_stt_flow(pitch_purpose):
+    """
+    Function to run STT and refinement.
+    Args:
+        pitch_purpose (str): Purpose of the pitch.
+    Returns:
+        refined_text (str): Refined STT transcription.
+        refined_chunks (list): List of refined text chunks.
+    """
 
     # STT
     recognized_text, recognized_chunks = call_stt(AUDIO_FILE_PATH + AUDIO_FILE_NAME)
