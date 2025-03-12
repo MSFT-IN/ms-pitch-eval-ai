@@ -43,3 +43,5 @@ def convert_mp3_to_spectrogram(mp3_path, spectrogram_base_path, segment_duration
         plt.close()
 
         print(f"Saved: {segment_filename}")
+        
+    return num_segments

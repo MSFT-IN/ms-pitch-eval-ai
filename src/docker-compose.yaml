@@ -4,7 +4,7 @@ version: '3'
 x-airflow-common:
   &airflow-common
 
-  # 에어플로우 도커이미지 버전 기본값 2.5.1임
+  # 에어플로우 도커이미지 버전 기본값 2.5.1임임
   image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.5.1}
 
   # 환경 변수 설정
@@ -26,7 +26,8 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags  # DAG 파일 디렉터리 연결
     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs  # 로그 파일 저장 디렉터리 연결
     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins  # Airflow 플러그인 디렉터리 연결
-    - ./requirements:/requirements  # requirements 폴더 공유
+    - ./requirements.txt:/requirements.txt
+    - ./.env:/opt/.env
 
   # 컨테이너 내에서 사용자 권한 설정
   user: "${AIRFLOW_UID:-50000}:0"  # 기본 사용자 UID를 50000으로 설정 (호스트와 권한 일치)
@@ -38,6 +39,9 @@ x-airflow-common:
       condition: service_healthy  # Redis 서비스가 정상적으로 작동할 때까지 대기
     postgres:
       condition: service_healthy  # Postgres 서비스가 정상적으로 작동할 때까지 대기
+  entrypoint: ["bash", "-c", "if [ -f /requirements.txt ]; then echo 'Installing Python packages from requirements.txt'; pip install -r /requirements.txt; fi; exec \"$@\"", "dummy"]
+
+
 
 
 services:
@@ -54,7 +58,7 @@ services:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 5s
       retries: 5
-   # restart: always
+    restart: always
 
   #Celery 메세지 브로커 역할. Celery Worker와 DAG간 태스크 매새지 전달달
   redis:
@@ -66,23 +70,20 @@ services:
       interval: 5s
       timeout: 30s
       retries: 50
-    # restart: always
+    restart: always
 
   #Airflow 웹UI 제공
   airflow-webserver:
     <<: *airflow-common
-    command: webserver
+    command: ["airflow", "webserver"]
     ports:
       - 8080:8080
-    environment:
-      - _PIP_ADDITIONAL_REQUIREMENTS=-r /requirements/airflow.txt
-
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
       interval: 10s
       timeout: 10s
       retries: 5
-    # restart: always
+    restart: always
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -91,15 +92,13 @@ services:
   #DAG 스케줄링 및 태스크 실행 관리 
   airflow-scheduler:
     <<: *airflow-common
-    command: scheduler
-    environment:
-      - _PIP_ADDITIONAL_REQUIREMENTS=-r /requirements/airflow.txt
+    command: ["airflow", "scheduler"]
     healthcheck:
       test: ["CMD-SHELL", 'airflow jobs check --job-type SchedulerJob --hostname "$${HOSTNAME}"']
       interval: 10s
       timeout: 10s
       retries: 5
-    #restart: always
+    restart: always
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -107,7 +106,7 @@ services:
   #Celery 통해 DAG의 태스크 실행행
   airflow-worker:
     <<: *airflow-common
-    command: celery worker
+    command: ["airflow", "celery", "worker"]
     healthcheck:
       test:
         - "CMD-SHELL"
@@ -117,9 +116,8 @@ services:
       retries: 5
     environment:
       <<: *airflow-common-env
-      _PIP_ADDITIONAL_REQUIREMENTS: -r /requirements/worker.txt
       DUMB_INIT_SETSID: "0"
-    # restart: always
+    restart: always
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
@@ -129,19 +127,17 @@ services:
   #Sensor 태스크들 비동기적으로 할 수 있게 해좀좀
   airflow-triggerer:
     <<: *airflow-common
-    command: triggerer
+    command: ["airflow", "triggerer"]
     healthcheck:
       test: ["CMD-SHELL", 'airflow jobs check --job-type TriggererJob --hostname "$${HOSTNAME}"']
       interval: 10s
       timeout: 10s
       retries: 5
-    # restart: always
+    restart: always
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-    environment:
-      - _PIP_ADDITIONAL_REQUIREMENTS=-r /requirements/airflow.txt
         
   # Airflow 초기화
   airflow-init:
@@ -151,7 +147,6 @@ services:
     command:
       - -c
       - |
-        airflow db init && exec /entrypoint airflow version
         function ver() {
           printf "%04d%04d%04d%04d" $${1//./ }
         }
@@ -249,13 +244,11 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
-    # restart: always
+    restart: always
     depends_on:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
-    environment:
-      - _PIP_ADDITIONAL_REQUIREMENTS=-r /requirements/flower.txt
 
 volumes:
   postgres-db-volume:

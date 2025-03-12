@@ -13,15 +13,15 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '../../.env'))
 
 # 환경 변수 설정
 AZURE_CONN_STR = os.getenv('AZURE_CONN_STR')
-MP3_CONTAINER = os.getenv("AZURE_MP3_CONTAINER", "bronze")
-SPECTO_CONTAINER = os.getenv("AZURE_SILVER_CONTAINER", "silver")
+MP3_CONTAINER = os.getenv('MP3_CONTAINER')
+SPECTO_CONTAINER = os.getenv('SPECTO_CONTAINER')
 
 
 
 
 # 환경 변수 로드 확인
-if not AZURE_CONN_STR or MP3_CONTAINER or SPECTO_CONTAINER:
-    raise ValueError("AZURE_CONN_STR not found")
+if not AZURE_CONN_STR or not MP3_CONTAINER or not SPECTO_CONTAINER:
+    raise ValueError("AZURE_CONN_STR check required found")
 
 # DAG 기본 설정 (필수임)
 default_args = {
@@ -43,38 +43,77 @@ dag = DAG(
 
 )
 
-# Python Operator에서 호출할 실제 작업 함수 . 
+# # Python Operator에서 호출할 실제 작업 함수 . 
+# def process_new_mp3_files(**context):
+#     """
+#     센서로 확인한 mp3파일에 대해:
+#     1. MP3 CONTAINER에서 다운로드
+#     2. 스펙토그램으로 변환
+#     3. SPECTO CONTAINER로 업로드 
+#     4. 로컬 삭제함
+#     """
+#     # Task Instance rkwudhrl (Xcom 데이터 접근 위해)
+#     ti = context['ti']
+#     # 'check_new_mp3_files' 센서 태스크에서 푸시된 mp3 파일 목록 가져오기
+#     new_files = ti.xcom_pull(key = 'new_mp3_files', task_ids= 'check_new_mp3_files')
+#     # 새파일 없으면 함 수 종료료
+#     if not new_files:
+#         return
+#     for blob_name in new_files:
+
+#         #1. Bronze BLob에서 mp3다운 
+#         download_path = f"/tmp/{blob_name}"
+#         download_blob(AZURE_CONN_STR, MP3_CONTAINER, blob_name, download_path)
+
+#         #2. 스펙토그램 이미지로 변환 
+#         specto_path = download_path.replace(".mp3", ".png")
+#         num_split = convert_mp3_to_spectrogram(download_path, specto_path)
+#         #3.Silver Blob에 업로드 
+#         for i in range(num_split):
+#             upload_blob(AZURE_CONN_STR, SPECTO_CONTAINER, ospecto_path , blob_name.replace(".mp3", ".png"))
+# #여기하다말았음.
+
+#         os.remove(download_path)
+#         os.remove(specto_path)
+
 def process_new_mp3_files(**context):
     """
-    센서로 확인한 mp3파일에 대해:
+    센서로 확인한 MP3 파일에 대해:
     1. MP3 CONTAINER에서 다운로드
-    2. 스펙토그램으로 변환
-    3. SPECTO CONTAINER로 업로드 
-    4. 로컬 삭제함
+    2. 스펙트로그램으로 변환 (여러 개의 파일로 분할 가능)
+    3. SPECTO CONTAINER로 업로드 (분할된 모든 파일 업로드)
+    4. 로컬 파일 삭제
     """
-    # Task Instance rkwudhrl (Xcom 데이터 접근 위해)
+    # Task Instance 핸들러 (Xcom 데이터 접근)
     ti = context['ti']
-    # 'check_new_mp3_files' 센서 태스크에서 푸시된 mp3 파일 목록 가져오기
-    new_files = ti.xcom_pull(key = 'new_mp3_files', task_ids= 'check_new_mp3_files')
-    # 새파일 없으면 함 수 종료료
+    
+    # 'check_new_mp3_files' 센서 태스크에서 푸시된 MP3 파일 목록 가져오기
+    new_files = ti.xcom_pull(key='new_mp3_files', task_ids='check_new_mp3_files')
+
+    # 새 파일이 없으면 함수 종료
     if not new_files:
         return
-    for blob_name in new_files:
 
-        #1. Bronze BLob에서 mp3다운 
+    for blob_name in new_files:
+        # 1. Bronze Blob에서 MP3 다운로드
         download_path = f"/tmp/{blob_name}"
         download_blob(AZURE_CONN_STR, MP3_CONTAINER, blob_name, download_path)
 
-        #2. 스펙토그램 이미지로 변환 
-        specto_path = download_path.replace(".mp3", ".png")
-        convert_mp3_to_spectrogram(download_path, specto_path)
+        # 2. MP3를 스펙트로그램 이미지로 변환 (여러 개의 파일로 분할)
+        specto_base_path = download_path.replace(".mp3", "")
+        num_split = convert_mp3_to_spectrogram(download_path, specto_base_path)
 
-        #3.Silver Blob에 업로드 
-        upload_blob(AZURE_CONN_STR, SPECTO_CONTAINER, specto_path, blob_name.replace(".mp3", ".png"))
+        # 3. Silver Blob에 업로드
+        for i in range(num_split):
+            specto_path = f"{specto_base_path}_{i+1}.png"
+            specto_blob_name = blob_name.replace(".mp3", f"_{i+1}.png")  # 원본 파일명에 인덱스 추가
+            upload_blob(AZURE_CONN_STR, SPECTO_CONTAINER, specto_path, specto_blob_name)
 
+            # 변환된 개별 스펙트로그램 파일 삭제
+            os.remove(specto_path)
 
+        # 원본 MP3 파일 삭제
         os.remove(download_path)
-        os.remove(specto_path)
 
 
 

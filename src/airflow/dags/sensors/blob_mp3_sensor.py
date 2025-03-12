@@ -28,7 +28,7 @@ class AzureBlobMp3Sensor(BaseSensorOperator):
                     new_files.append(blob.name)
 
         if new_files: 
-            context['ti'].xcom_push(key='new_mp3_files', values = new_files)
+            context['ti'].xcom_push(key='new_mp3_files', value = new_files)
             self.log.info("Found new mp3 files: %s", new_files)
             return True
         else: 
