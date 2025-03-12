@@ -15,6 +15,10 @@ def extract_data():
     SERVICE_REGION = os.getenv("SERVICE_REGION")
     AUDIO_FILE = os.getenv("AUDIO_FILE")
 
+    # check file type
+    if not AUDIO_FILE.lower().endswith(".wav"):
+        raise ValueError("Only .wav files are allowed.")
+
     # set speech config
     speech_config = speechsdk.SpeechConfig(
         subscription=SPEECH_KEY, 
