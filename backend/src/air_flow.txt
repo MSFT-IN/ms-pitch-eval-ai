@@ -1,0 +1,120 @@
+Attaching to src_airflow-init_1, src_postgres_1, src_redis_1
+[33mpostgres_1           |[0m 
+[33mpostgres_1           |[0m PostgreSQL Database directory appears to contain a database; Skipping initialization
+[33mpostgres_1           |[0m 
+[33mpostgres_1           |[0m 2025-03-08 09:40:00.666 UTC [1] LOG:  starting PostgreSQL 13.20 (Debian 13.20-1.pgdg120+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14) 12.2.0, 64-bit
+[33mpostgres_1           |[0m 2025-03-08 09:40:00.666 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+[33mpostgres_1           |[0m 2025-03-08 09:40:00.666 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+[33mpostgres_1           |[0m 2025-03-08 09:40:00.672 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+[33mpostgres_1           |[0m 2025-03-08 09:40:00.680 UTC [27] LOG:  database system was shut down at 2025-03-08 09:38:37 UTC
+[33mpostgres_1           |[0m 2025-03-08 09:40:00.687 UTC [1] LOG:  database system is ready to accept connections
+[33mpostgres_1           |[0m 2025-03-08 09:40:32.190 UTC [1] LOG:  received fast shutdown request
+[33mpostgres_1           |[0m 2025-03-08 09:40:32.193 UTC [1] LOG:  aborting any active transactions
+[33mpostgres_1           |[0m 2025-03-08 09:40:32.197 UTC [1] LOG:  background worker "logical replication launcher" (PID 33) exited with exit code 1
+[33mpostgres_1           |[0m 2025-03-08 09:40:32.197 UTC [28] LOG:  shutting down
+[33mpostgres_1           |[0m 2025-03-08 09:40:32.238 UTC [1] LOG:  database system is shut down
+[33mpostgres_1           |[0m 
+[33mpostgres_1           |[0m PostgreSQL Database directory appears to contain a database; Skipping initialization
+[33mpostgres_1           |[0m 
+[33mpostgres_1           |[0m 2025-03-08 09:40:45.907 UTC [1] LOG:  starting PostgreSQL 13.20 (Debian 13.20-1.pgdg120+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14) 12.2.0, 64-bit
+[33mpostgres_1           |[0m 2025-03-08 09:40:45.907 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+[33mpostgres_1           |[0m 2025-03-08 09:40:45.907 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+[33mpostgres_1           |[0m 2025-03-08 09:40:45.912 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+[33mpostgres_1           |[0m 2025-03-08 09:40:45.918 UTC [27] LOG:  database system was shut down at 2025-03-08 09:40:32 UTC
+[33mpostgres_1           |[0m 2025-03-08 09:40:45.931 UTC [1] LOG:  database system is ready to accept connections
+[36mairflow-init_1       |[0m Traceback (most recent call last):
+[36mairflow-init_1       |[0m   File "/home/airflow/.local/bin/airflow", line 5, in <module>
+[36mairflow-init_1       |[0m     from airflow.__main__ import main
+[36mairflow-init_1       |[0m ModuleNotFoundError: No module named 'airflow'
+[36mairflow-init_1       |[0m The container is run as root user. For security, consider using a regular user account.
+[36mairflow-init_1       |[0m 
+[36mairflow-init_1       |[0m /home/airflow/.local/lib/python3.10/site-packages/airflow/models/base.py:49 MovedIn20Warning: Deprecated API features detected! These feature(s) are not compatible with SQLAlchemy 2.0. To prevent incompatible upgrades prior to updating applications, ensure requirements files are pinned to "sqlalchemy<2.0". Set environment variable SQLALCHEMY_WARN_20=1 to show all deprecation warnings.  Set environment variable SQLALCHEMY_SILENCE_UBER_WARNING=1 to silence this message. (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+[36mairflow-init_1       |[0m DB: postgresql+psycopg2://airflow:***@postgres/airflow
+[36mairflow-init_1       |[0m Performing upgrade with database postgresql+psycopg2://airflow:***@postgres/airflow
+[36mairflow-init_1       |[0m [[34m2025-03-08 09:40:15,960[0m] {[34mmigration.py:[0m205} INFO[0m - Context impl PostgresqlImpl.[0m
+[36mairflow-init_1       |[0m [[34m2025-03-08 09:40:15,961[0m] {[34mmigration.py:[0m208} INFO[0m - Will assume transactional DDL.[0m
+[36mairflow-init_1       |[0m [[34m2025-03-08 09:40:15,973[0m] {[34mdb.py:[0m1571} INFO[0m - Creating tables[0m
+[36mairflow-init_1       |[0m INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+[36mairflow-init_1       |[0m INFO  [alembic.runtime.migration] Will assume transactional DDL.
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(BashOperator): create_entry_group>, delete_entry_group already registered for DAG: example_complex
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(BashOperator): delete_entry_group>, create_entry_group already registered for DAG: example_complex
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(BashOperator): create_entry_gcs>, delete_entry already registered for DAG: example_complex
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(BashOperator): delete_entry>, create_entry_gcs already registered for DAG: example_complex
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(BashOperator): create_tag>, delete_tag already registered for DAG: example_complex
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(BashOperator): delete_tag>, create_tag already registered for DAG: example_complex
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): print_the_context>, log_sql_query already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): log_sql_query>, print_the_context already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): print_the_context>, log_sql_query already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): log_sql_query>, print_the_context already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): print_the_context>, log_sql_query already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): log_sql_query>, print_the_context already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): print_the_context>, log_sql_query already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): log_sql_query>, print_the_context already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): prepare_email>, send_email already registered for DAG: example_dag_decorator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(EmailOperator): send_email>, prepare_email already registered for DAG: example_dag_decorator
+[36mairflow-init_1       |[0m Upgrades done
+[36mairflow-init_1       |[0m [[34m2025-03-08 09:40:26,090[0m] {[34mproviders_manager.py:[0m235} INFO[0m - Optional provider feature disabled when importing 'airflow.providers.google.leveldb.hooks.leveldb.LevelDBHook' from 'apache-airflow-providers-google' package[0m
+[36mairflow-init_1       |[0m /home/airflow/.local/lib/python3.10/site-packages/azure/storage/common/_connection.py:82 SyntaxWarning: "is" with a literal. Did you mean "=="?
+[36mairflow-init_1       |[0m [[34m2025-03-08 09:40:28,069[0m] {[34mproviders_manager.py:[0m235} INFO[0m - Optional provider feature disabled when importing 'airflow.providers.google.leveldb.hooks.leveldb.LevelDBHook' from 'apache-airflow-providers-google' package[0m
+[36mairflow-init_1       |[0m airflow already exist in the db
+[36mairflow-init_1       |[0m 2.5.1
+[36mairflow-init_1       |[0m Traceback (most recent call last):
+[36mairflow-init_1       |[0m   File "/home/airflow/.local/bin/airflow", line 5, in <module>
+[36mairflow-init_1       |[0m     from airflow.__main__ import main
+[36mairflow-init_1       |[0m ModuleNotFoundError: No module named 'airflow'
+[36mairflow-init_1       |[0m The container is run as root user. For security, consider using a regular user account.
+[36mairflow-init_1       |[0m 
+[36mairflow-init_1       |[0m /home/airflow/.local/lib/python3.10/site-packages/airflow/models/base.py:49 MovedIn20Warning: Deprecated API features detected! These feature(s) are not compatible with SQLAlchemy 2.0. To prevent incompatible upgrades prior to updating applications, ensure requirements files are pinned to "sqlalchemy<2.0". Set environment variable SQLALCHEMY_WARN_20=1 to show all deprecation warnings.  Set environment variable SQLALCHEMY_SILENCE_UBER_WARNING=1 to silence this message. (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
+[36mairflow-init_1       |[0m DB: postgresql+psycopg2://airflow:***@postgres/airflow
+[36mairflow-init_1       |[0m Performing upgrade with database postgresql+psycopg2://airflow:***@postgres/airflow
+[36mairflow-init_1       |[0m [[34m2025-03-08 09:40:55,199[0m] {[34mmigration.py:[0m205} INFO[0m - Context impl PostgresqlImpl.[0m
+[36mairflow-init_1       |[0m [[34m2025-03-08 09:40:55,199[0m] {[34mmigration.py:[0m208} INFO[0m - Will assume transactional DDL.[0m
+[36mairflow-init_1       |[0m [[34m2025-03-08 09:40:55,211[0m] {[34mdb.py:[0m1571} INFO[0m - Creating tables[0m
+[36mairflow-init_1       |[0m INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+[36mairflow-init_1       |[0m INFO  [alembic.runtime.migration] Will assume transactional DDL.
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(BashOperator): create_entry_group>, delete_entry_group already registered for DAG: example_complex
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(BashOperator): delete_entry_group>, create_entry_group already registered for DAG: example_complex
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(BashOperator): create_entry_gcs>, delete_entry already registered for DAG: example_complex
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(BashOperator): delete_entry>, create_entry_gcs already registered for DAG: example_complex
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(BashOperator): create_tag>, delete_tag already registered for DAG: example_complex
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(BashOperator): delete_tag>, create_tag already registered for DAG: example_complex
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): print_the_context>, log_sql_query already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): log_sql_query>, print_the_context already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): print_the_context>, log_sql_query already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): log_sql_query>, print_the_context already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): print_the_context>, log_sql_query already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): log_sql_query>, print_the_context already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): print_the_context>, log_sql_query already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): log_sql_query>, print_the_context already registered for DAG: example_python_operator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(_PythonDecoratedOperator): prepare_email>, send_email already registered for DAG: example_dag_decorator
+[36mairflow-init_1       |[0m WARNI [airflow.task.operators] Dependency <Task(EmailOperator): send_email>, prepare_email already registered for DAG: example_dag_decorator
+[36mairflow-init_1       |[0m Upgrades done
+[36mairflow-init_1       |[0m [[34m2025-03-08 09:41:02,222[0m] {[34mproviders_manager.py:[0m235} INFO[0m - Optional provider feature disabled when importing 'airflow.providers.google.leveldb.hooks.leveldb.LevelDBHook' from 'apache-airflow-providers-google' package[0m
+[36mairflow-init_1       |[0m [[34m2025-03-08 09:41:02,878[0m] {[34mproviders_manager.py:[0m235} INFO[0m - Optional provider feature disabled when importing 'airflow.providers.google.leveldb.hooks.leveldb.LevelDBHook' from 'apache-airflow-providers-google' package[0m
+[36mairflow-init_1       |[0m airflow already exist in the db
+[32mredis_1              |[0m 1:C 08 Mar 2025 09:40:00.589 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+[32mredis_1              |[0m 1:C 08 Mar 2025 09:40:00.590 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+[32mredis_1              |[0m 1:C 08 Mar 2025 09:40:00.590 * Redis version=7.4.2, bits=64, commit=00000000, modified=0, pid=1, just started
+[32mredis_1              |[0m 1:C 08 Mar 2025 09:40:00.590 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:00.591 * monotonic clock: POSIX clock_gettime
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:00.591 * Running mode=standalone, port=6379.
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:00.592 * Server initialized
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:00.593 * Ready to accept connections tcp
+[32mredis_1              |[0m 1:signal-handler (1741426832) Received SIGTERM scheduling shutdown...
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:32.259 * User requested shutdown...
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:32.259 * Saving the final RDB snapshot before exiting.
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:32.268 * DB saved on disk
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:32.268 # Redis is now ready to exit, bye bye...
+[32mredis_1              |[0m 1:C 08 Mar 2025 09:40:45.895 # WARNING Memory overcommit must be enabled! Without it, a background save or replication may fail under low memory condition. Being disabled, it can also cause failures without low memory condition, see https://github.com/jemalloc/jemalloc/issues/1328. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.
+[32mredis_1              |[0m 1:C 08 Mar 2025 09:40:45.895 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+[32mredis_1              |[0m 1:C 08 Mar 2025 09:40:45.895 * Redis version=7.4.2, bits=64, commit=00000000, modified=0, pid=1, just started
+[32mredis_1              |[0m 1:C 08 Mar 2025 09:40:45.895 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:45.895 * monotonic clock: POSIX clock_gettime
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:45.896 * Running mode=standalone, port=6379.
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:45.896 * Server initialized
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:45.896 * Loading RDB produced by version 7.4.2
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:45.896 * RDB age 13 seconds
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:45.896 * RDB memory usage when created 0.93 Mb
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:45.896 * Done loading RDB, keys loaded: 0, keys expired: 0.
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:45.896 * DB loaded from disk: 0.000 seconds
+[32mredis_1              |[0m 1:M 08 Mar 2025 09:40:45.896 * Ready to accept connections tcp

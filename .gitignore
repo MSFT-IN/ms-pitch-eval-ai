@@ -174,3 +174,5 @@ cython_debug/
 evalai_venv/
 *.mp3
 *.wav
+=======
+src/airflow/logs/
