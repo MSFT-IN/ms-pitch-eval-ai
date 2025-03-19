@@ -2,7 +2,7 @@ from datetime import timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
-from sensors.blob_mp3_sensor import AzureBlobMp3Sensor
+from sensors.blob_mp3_sensor import AzureBlobWavSensor
 from tasks.blob_tasks import download_blob, upload_blob
 from tasks.tranform_tasks import convert_mp3_to_spectrogram 
 from dotenv import load_dotenv
@@ -78,7 +78,7 @@ def process_new_mp3_files(**context):
 
 
 
-check_new_mp3_files = AzureBlobMp3Sensor(
+check_new_mp3_files = AzureBlobWavSensor(
     task_id = "check_new_mp3_files",
     connection_str= AZURE_CONN_STR,
     container_name = MP3_CONTAINER,
