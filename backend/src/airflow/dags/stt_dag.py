@@ -70,8 +70,8 @@ def process_new_wav_files(**context):
             json.dump(recognized_chunks, f)
 
         # 3. Silver Blob에 업로드
-        upload_blob(AZURE_CONN_STR, STT_CONTAINER, stt_path, blob_name.replace(".wav", ".txt"))
-        upload_blob(AZURE_CONN_STR, STT_CONTAINER, chunks_path, blob_name.replace(".wav", "_chunks.json"))
+        upload_blob(AZURE_CONN_STR, STT_CONTAINER, stt_path, blob_name.replace(".wav", "_stt.txt"))
+        upload_blob(AZURE_CONN_STR, STT_CONTAINER, chunks_path, blob_name.replace(".wav", "_stt_chunks.json"))
 
         os.remove(download_path)
         os.remove(stt_path)
