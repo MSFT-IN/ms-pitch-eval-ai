@@ -2,7 +2,7 @@ from datetime import timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
-from sensors.blob_mp3_sensor import AzureBlobWavSensor
+from sensors.blob_wav_sensor import AzureBlobWavSensor
 from tasks.blob_tasks import download_blob, upload_blob
 from dotenv import load_dotenv
 import os
