@@ -39,14 +39,16 @@ def generate_content_feedback(pitch_purpose, chunks):
     Args:
         chunks (list): List of text chunks to provide feedback on.
     Returns:
-        feedback_text (str): Feedback on the text chunks.
+        feedback_chunks (list): List of feedback on the text chunks.
     """
     
-    feedback_text = ""
+    feedback_chunks = []
 
     # Exclude the first and last chunks
+    feedback_chunks.append("N/A")
     for chunk in chunks[1:-1]:
         feedback = call_gpt_for_feedback(pitch_purpose, chunk)
-        feedback_text += feedback + " "
+        feedback_chunks.append(feedback)
+    feedback_chunks.append("N/A")
     
-    return feedback_text
+    return feedback_chunks

@@ -76,8 +76,12 @@ def process_new_json_files(**context):
             json.dump(refined_chunks, f)
 
         # 3. 피드백 생성
-        feedback_text = generate_content_feedback(pitch_purpose, refined_chunks)
-        combined_text = "[AI Speech Transcription]\n" + refined_text + "\n\n[AI Assisted Feedback]\n" + feedback_text + "\n\n"
+        feedback_chunks = generate_content_feedback(pitch_purpose, refined_chunks)
+        combined_chunks = [
+            f"[Transcription]\n{refined_chunk}\n\n[AI-Assisted Feedback]\n{feedback_chunk}\n"
+            for refined_chunk, feedback_chunk in zip(refined_chunks, feedback_chunks)
+        ]
+        combined_text = "\n\n".join(combined_chunks)
         combined_path = download_path.replace(".json", "_feedback.txt")
 
         with open(combined_path, 'w') as f:
