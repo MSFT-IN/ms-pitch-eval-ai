@@ -68,6 +68,7 @@ def extract_data():
         recognized_words = [
             {word_data['Word']: word_data['PronunciationAssessment']['AccuracyScore']}
             for word_data in words
+            if len(word_data['Word']) >= 3
         ]
 
         word_accuracy_list += recognized_words
@@ -75,14 +76,15 @@ def extract_data():
         pron_scores.append(pronunciation_result.pronunciation_score)
         fluency_scores.append(pronunciation_result.fluency_score)
 
-
+        """
         # data during recognition
-        print("Target Words: {}, Accuracy Score: {}, Pronunciation Score: {}, Fluency Score: {}".format(
+        print("Target Words: {}, Accuracy Score: {}, Pronunciation Score: {}, Fluency Score: {})".format(
                 recognized_words,
                 accuracy_scores,
                 pron_scores,
                 fluency_scores
         ))
+        """
 
     # connect events by recognizer
     speech_recognizer.recognized.connect(recognized)
@@ -96,13 +98,10 @@ def extract_data():
     speech_recognizer.stop_continuous_recognition()
 
     return {
-        "avg_accuracy_score": round(sum(accuracy_scores) / len(accuracy_scores), 2),
-        "avg_pron_score": round(sum(pron_scores) / len(pron_scores), 2),
-        "avg_fluency_score": round(sum(fluency_scores) / len(fluency_scores), 2),
+        "avg_accuracy_score": round(sum(accuracy_scores) / len(accuracy_scores), 2), # pronunciation accuracy
+        "avg_pron_score": round(sum(pron_scores) / len(pron_scores), 2), # overall score of the pronunciation quality
+        "avg_fluency_score": round(sum(fluency_scores) / len(fluency_scores), 2), # fluency (native use of silent breaks)
         "bad_words": sorted(
             word_accuracy_list, key=lambda x: list(x.values())[0]
-        )[:30]
+        )[:10]
     }
-
-result = extract_data()
-print('result: ', result)
