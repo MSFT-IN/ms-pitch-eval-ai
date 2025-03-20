@@ -1,6 +1,7 @@
 import tiktoken
-
 from base_call import call_gpt
+
+
 
 def call_gpt_for_feedback(pitch_purpose, text_chunk):
     """
@@ -31,7 +32,7 @@ def call_gpt_for_feedback(pitch_purpose, text_chunk):
 
 
 
-def run_feedback_flow(pitch_purpose, chunks):
+def generate_content_feedback(pitch_purpose, chunks):
     """
     Function to run the feedback flow on the text chunks.
     

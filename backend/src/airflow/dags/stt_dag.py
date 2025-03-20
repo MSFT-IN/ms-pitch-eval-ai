@@ -6,7 +6,7 @@ from sensors.blob_mp3_sensor import AzureBlobWavSensor
 from tasks.blob_tasks import download_blob, upload_blob
 from dotenv import load_dotenv
 import os
-from tasks.base_call import call_stt
+from tasks.run_stt import run_basic_stt
 import json
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '../../.env'))
@@ -59,23 +59,23 @@ def process_new_wav_files(**context):
         download_blob(AZURE_CONN_STR, WAV_CONTAINER, blob_name, download_path)
 
         # 2. STT 변환
-        stt_text, recognized_chunks = call_stt(download_path)
-        stt_path = download_path.replace(".wav", ".txt")
-        chunks_path = download_path.replace(".wav", "_chunks.json")
+        stt_text, recognized_chunks = run_basic_stt(download_path)
+        stt_text_path = download_path.replace(".wav", ".txt")
+        stt_chunks_path = download_path.replace(".wav", "_chunks.json")
 
-        with open(stt_path, 'w') as f:
+        with open(stt_text_path, 'w') as f:
             f.write(stt_text)
 
-        with open(chunks_path, 'w') as f:
+        with open(stt_chunks_path, 'w') as f:
             json.dump(recognized_chunks, f)
 
         # 3. Silver Blob에 업로드
-        upload_blob(AZURE_CONN_STR, STT_CONTAINER, stt_path, blob_name.replace(".wav", "_stt.txt"))
-        upload_blob(AZURE_CONN_STR, STT_CONTAINER, chunks_path, blob_name.replace(".wav", "_stt_chunks.json"))
+        upload_blob(AZURE_CONN_STR, STT_CONTAINER, stt_text_path, blob_name.replace(".wav", "_stt.txt"))
+        upload_blob(AZURE_CONN_STR, STT_CONTAINER, stt_chunks_path, blob_name.replace(".wav", "_stt_chunks.json"))
 
         os.remove(download_path)
-        os.remove(stt_path)
-        os.remove(chunks_path)
+        os.remove(stt_text_path)
+        os.remove(stt_chunks_path)
 
 check_new_wav_files = AzureBlobWavSensor(
     task_id="check_new_wav_files",

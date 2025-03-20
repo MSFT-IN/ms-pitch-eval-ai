@@ -5,7 +5,7 @@ from airflow.utils.dates import days_ago
 from sensors.blob_json_sensor import AzureBlobJsonSensor
 from tasks.blob_tasks import download_blob, upload_blob
 from tasks.run_stt import refine_stt
-from backend.src.airflow.dags.tasks.generate_content_feedback import run_feedback_flow
+from backend.src.airflow.dags.tasks.generate_content_feedback import generate_content_feedback
 from dotenv import load_dotenv
 import os
 import json
@@ -76,15 +76,15 @@ def process_new_json_files(**context):
             json.dump(refined_chunks, f)
 
         # 3. 피드백 생성
-        feedback_text = run_feedback_flow(pitch_purpose, refined_chunks)
-        combined_text = refined_text + "\n\n" + feedback_text
-        combined_path = download_path.replace(".json", "_combined.txt")
+        feedback_text = generate_content_feedback(pitch_purpose, refined_chunks)
+        combined_text = "[AI Speech Transcription]\n" + refined_text + "\n\n[AI Assisted Feedback]\n" + feedback_text + "\n\n"
+        combined_path = download_path.replace(".json", "_feedback.txt")
 
         with open(combined_path, 'w') as f:
             f.write(combined_text)
 
         # 4. Feedback Blob에 업로드
-        upload_blob(AZURE_CONN_STR, FEEDBACK_CONTAINER, combined_path, blob_name.replace(".json", "_combined.txt"))
+        upload_blob(AZURE_CONN_STR, FEEDBACK_CONTAINER, combined_path, blob_name.replace(".json", "_feedback.txt"))
 
         os.remove(download_path)
         os.remove(refined_chunks_path)

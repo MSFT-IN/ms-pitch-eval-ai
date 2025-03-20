@@ -8,6 +8,23 @@ AUDIO_FILE_PATH = os.getenv("AUDIO_FILE_PATH")
 AUDIO_FILE_NAME = os.getenv("AUDIO_FILE_NAME")
 
 
+def run_basic_stt():
+    """
+    Function to run STT.
+    Args:
+        pitch_purpose (str): Purpose of the pitch.
+    Returns:
+        refined_text (str): Refined STT transcription.
+        refined_chunks (list): List of refined text chunks.
+    """
+
+    # STT
+    recognized_text, recognized_chunks = call_stt(AUDIO_FILE_PATH + AUDIO_FILE_NAME)
+    print(f"Recognized Text: {recognized_text}")
+    
+    return recognized_text, recognized_chunks
+
+
 
 def call_gpt_for_refinement(pitch_purpose, stt_chunk):
     """
@@ -60,22 +77,3 @@ def refine_stt(pitch_purpose, recognized_chunks):
 
 
 
-def run_stt_flow(pitch_purpose):
-    """
-    Function to run STT and refinement.
-    Args:
-        pitch_purpose (str): Purpose of the pitch.
-    Returns:
-        refined_text (str): Refined STT transcription.
-        refined_chunks (list): List of refined text chunks.
-    """
-
-    # STT
-    recognized_text, recognized_chunks = call_stt(AUDIO_FILE_PATH + AUDIO_FILE_NAME)
-    print(f"Recognized Text: {recognized_text}")
-
-    # Refine transcription
-    refined_text, refined_chunks = refine_stt(pitch_purpose, recognized_chunks)
-    print(f"Refined Text: {refined_text}")
-    
-    return refined_text, refined_chunks
