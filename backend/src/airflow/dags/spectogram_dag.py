@@ -13,8 +13,8 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '../../.env'))
 
 # 환경 변수 설정
 AZURE_CONN_STR = os.getenv('AZURE_CONN_STR')
-MP3_CONTAINER = os.getenv("AZURE_MP3_CONTAINER", "bronze")
-SPECTO_CONTAINER = os.getenv("AZURE_SILVER_CONTAINER", "silver")
+MP3_CONTAINER = os.getenv("WAV_CONTAINER", "bronze")
+SPECTO_CONTAINER = os.getenv("SPECTO_CONTAINER", "silver")
 
 
 

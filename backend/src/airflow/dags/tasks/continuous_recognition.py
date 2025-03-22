@@ -202,6 +202,6 @@ def extract_data_from_airflow(airflow_wav_path):
     json_path = airflow_wav_path.replace(".wav", "_pronunciation.json")
 
     with open(json_path, 'w') as f:
-        f.write(json_output)
+        f.write(str(json_output))
     
     return json_path

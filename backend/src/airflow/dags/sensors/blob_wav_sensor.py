@@ -28,7 +28,7 @@ class AzureBlobWavSensor(BaseSensorOperator):
                     new_files.append(blob.name)
 
         if new_files: 
-            context['ti'].xcom_push(key='new_wav_files', values = new_files)
+            context['ti'].xcom_push(key='new_wav_files', value = new_files)
             self.log.info("Found new wav files: %s", new_files)
             return True
         else: 

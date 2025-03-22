@@ -13,8 +13,8 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '../../.env'))
 
 # 환경 변수 설정
 AZURE_CONN_STR = os.getenv('AZURE_CONN_STR')
-WAV_CONTAINER = os.getenv("AZURE_WAV_CONTAINER", "bronze")
-STT_CONTAINER = os.getenv("AZURE_STT_CONTAINER", "silver")
+WAV_CONTAINER = os.getenv("WAV_CONTAINER", "bronze")
+STT_CONTAINER = os.getenv("STT_CONTAINER", "silver")
 
 # 환경 변수 로드 확인
 if not (AZURE_CONN_STR or WAV_CONTAINER or STT_CONTAINER):
