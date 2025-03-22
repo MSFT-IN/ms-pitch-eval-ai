@@ -1,9 +1,12 @@
 import os
 import dotenv
 import tiktoken
+import sys
+sys.path.append(os.path.dirname(__file__))
 from base_call import call_gpt, call_stt
 
 dotenv.load_dotenv(override = True)
+
 AUDIO_FILE_PATH = os.getenv("AUDIO_FILE_PATH")
 AUDIO_FILE_NAME = os.getenv("AUDIO_FILE_NAME")
 

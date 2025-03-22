@@ -17,7 +17,7 @@ WAV_CONTAINER = os.getenv("AZURE_WAV_CONTAINER", "bronze")
 STT_CONTAINER = os.getenv("AZURE_STT_CONTAINER", "silver")
 
 # 환경 변수 로드 확인
-if not AZURE_CONN_STR or WAV_CONTAINER or STT_CONTAINER:
+if not (AZURE_CONN_STR or WAV_CONTAINER or STT_CONTAINER):
     raise ValueError("AZURE_CONN_STR not found")
 
 # DAG 기본 설정 (필수임)
