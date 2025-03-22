@@ -15,3 +15,13 @@ numpy==1.24.3
 # 쓸일있을것같음
 pandas==1.5.3
 requests==2.31.0
+
+# Suzy Minkyung DAG
+dotenv
+requests
+openai
+tiktoken
+azure-cognitiveservices-speech
+azure-ai-projects
+azure-core
+azure-identity

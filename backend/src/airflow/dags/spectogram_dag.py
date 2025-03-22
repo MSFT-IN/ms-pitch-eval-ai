@@ -2,7 +2,7 @@ from datetime import timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
-from sensors.blob_mp3_sensor import AzureBlobWavSensor
+from sensors.blob_wav_sensor import AzureBlobWavSensor
 from tasks.blob_tasks import download_blob, upload_blob
 from tasks.tranform_tasks import convert_mp3_to_spectrogram 
 from dotenv import load_dotenv
@@ -18,10 +18,14 @@ SPECTO_CONTAINER = os.getenv("AZURE_SILVER_CONTAINER", "silver")
 
 
 
+print("🔍 환경 변수 확인:")
+print("AZURE_CONN_STR:", AZURE_CONN_STR)
+print("MP3_CONTAINER:", MP3_CONTAINER)
+print("SPECTO_CONTAINER:", SPECTO_CONTAINER)
 
-# 환경 변수 로드 확인
-if not AZURE_CONN_STR or MP3_CONTAINER or SPECTO_CONTAINER:
-    raise ValueError("AZURE_CONN_STR not found")
+if not AZURE_CONN_STR:
+    raise ValueError("AZURE_CONN_STR가 누락됨 (.env 확인)")
+
 
 # DAG 기본 설정 (필수임)
 default_args = {

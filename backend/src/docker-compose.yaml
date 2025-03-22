@@ -34,7 +34,7 @@ x-airflow-common:
 
   # 컨테이너 시작 시 의존성 설정
   depends_on:
-    &airflow-common-depends-onㅇ
+    &airflow-common-depends-on
     redis:
       condition: service_healthy  # Redis 서비스가 정상적으로 작동할 때까지 대기
     postgres:
