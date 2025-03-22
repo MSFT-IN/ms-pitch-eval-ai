@@ -35,7 +35,7 @@ default_args = {
 
 
 dag = DAG(
-    'mp3_to_spectogram', # DAG 이름
+    'spectogram_dag', # DAG 이름
     default_args = default_args, # 설정 넣엊귀
     schedule_interval='* * * * *', #CRON 표현식으로 매분 실행
     catchup=False, # 시작일 이후 모든 주기를 실행하지 않음
