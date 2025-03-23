@@ -180,3 +180,5 @@ src/airflow/logs/
 
 #test.file
 *.ipynb
+
+backend/src/pretrained_models/**

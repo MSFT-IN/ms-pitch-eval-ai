@@ -15,7 +15,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), '../../.env'))
 
 AZURE_CONN_STR = os.getenv('AZURE_CONN_STR')
 WAV_CONTAINER = os.getenv("WAV_CONTAINER", "bronze")
-REFINED_CONTAINER = os.getenv("SPECTO_CONTAINER", "silver")
+REFINED_CONTAINER = os.getenv("REFINED_CONTAINER", "silver")
 
 if not AZURE_CONN_STR:
     raise ValueError("AZURE_CONN_STR가 누락됨 (.env 확인)")
@@ -50,15 +50,19 @@ def wav_to_refine_pipeline():
         # 센서 태스크에서 XCom으로 전달한 새로운 파일 목록을 받아옴
         ti = context["ti"]
         new_files = ti.xcom_pull(key="new_wav_files", task_ids="check_new_wav_files")
-        # 새 파일이 없으면 빈 리스트 반환
-        return new_files if new_files else []
+        if not new_files:
+            new_files = []
+        return new_files
 
     @task
     def process_one_file(blob_name: str):
         # 1. Bronze Blob에서 파일 다운로드
         download_path = f"/tmp/{blob_name}"
         download_blob(AZURE_CONN_STR, WAV_CONTAINER, blob_name, download_path)
-
+        if not os.path.exists(download_path):
+            raise FileNotFoundError(f"다운로드된 파일이 없음: {download_path}")
+        if os.path.getsize(download_path) == 0:
+            raise ValueError(f"파일이 비어있습니다: {download_path}")
         # 2. Speech Data 전처리 (1)
         output_preprocess = preprocess_speech(download_path)
 
@@ -89,11 +93,12 @@ def wav_to_refine_pipeline():
                 
         return f"Processed {blob_name}"
 
-    # 센서 태스크를 먼저 실행하도록 의존성 설정
+    # 태스크 간 의존성을 명시적으로 연결
+    sensor_task = check_new_wav_files
     new_files = get_new_files()
-    # new_files 리스트의 각 요소마다 process_one_file 태스크를 병렬로 실행
-    processed_results = process_one_file.expand(blob_name=new_files)
+    sensor_task >> new_files  # 센서 태스크 완료 후 get_new_files 실행
 
-    # (원한다면 processed_results 결과를 로그로 확인할 수 있음)
+    # get_new_files에서 받아온 파일 리스트에 대해 동적 매핑 실행
+    processed_results = process_one_file.expand(blob_name=new_files)
 
 dag_instance = wav_to_refine_pipeline()

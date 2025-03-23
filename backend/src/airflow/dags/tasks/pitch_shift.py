@@ -1,6 +1,5 @@
 import os
 import numpy as np
-import parselmouth
 import pyworld as pw
 import soundfile as sf
 

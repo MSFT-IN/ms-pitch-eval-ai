@@ -4,9 +4,6 @@ version: '3'
 x-airflow-common:
   &airflow-common
 
-  # 에어플로우 도커이미지 버전 기본값 2.5.1임임
-  image: ${AIRFLOW_IMAGE_NAME:-apache/airflow:2.5.1}
-
   # 환경 변수 설정
   environment:
     &airflow-common-env
@@ -39,7 +36,6 @@ x-airflow-common:
       condition: service_healthy  # Redis 서비스가 정상적으로 작동할 때까지 대기
     postgres:
       condition: service_healthy  # Postgres 서비스가 정상적으로 작동할 때까지 대기
-  entrypoint: ["bash", "-c", "if [ -f /requirements.txt ]; then echo 'Installing Python packages from requirements.txt'; pip install -r /requirements.txt; fi; exec \"$@\"", "dummy"]
 
 
 
@@ -75,6 +71,9 @@ services:
   #Airflow 웹UI 제공
   airflow-webserver:
     <<: *airflow-common
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
     command: ["airflow", "webserver"]
     ports:
       - 8080:8080
@@ -92,6 +91,9 @@ services:
   #DAG 스케줄링 및 태스크 실행 관리 
   airflow-scheduler:
     <<: *airflow-common
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
     command: ["airflow", "scheduler"]
     healthcheck:
       test: ["CMD-SHELL", 'airflow jobs check --job-type SchedulerJob --hostname "$${HOSTNAME}"']
@@ -106,6 +108,9 @@ services:
   #Celery 통해 DAG의 태스크 실행행
   airflow-worker:
     <<: *airflow-common
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
     command: ["airflow", "celery", "worker"]
     healthcheck:
       test:
@@ -127,6 +132,9 @@ services:
   #Sensor 태스크들 비동기적으로 할 수 있게 해좀좀
   airflow-triggerer:
     <<: *airflow-common
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
     command: ["airflow", "triggerer"]
     healthcheck:
       test: ["CMD-SHELL", 'airflow jobs check --job-type TriggererJob --hostname "$${HOSTNAME}"']
@@ -142,15 +150,18 @@ services:
   # Airflow 초기화
   airflow-init:
     <<: *airflow-common
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
     entrypoint: /bin/bash
-
     command:
       - -c
       - |
         function ver() {
           printf "%04d%04d%04d%04d" $${1//./ }
         }
-        airflow_version=$$(AIRFLOW__LOGGING__LOGGING_LEVEL=INFO && gosu airflow airflow version)
+        # 버전 문자열에서 공백과 개행 제거
+        airflow_version=$$(AIRFLOW__LOGGING__LOGGING_LEVEL=INFO && gosu airflow airflow version | tr -d '[:space:]')
         airflow_version_comparable=$$(ver $${airflow_version})
         min_airflow_version=2.2.0
         min_airflow_version_comparable=$$(ver $${min_airflow_version})
@@ -206,7 +217,6 @@ services:
         mkdir -p /sources/logs /sources/dags /sources/plugins
         chown -R "${AIRFLOW_UID}:0" /sources/{logs,dags,plugins}
         exec /entrypoint airflow version
-    # yamllint enable rule:line-length
     environment:
       <<: *airflow-common-env
       _AIRFLOW_DB_UPGRADE: 'true'

@@ -1,0 +1,34 @@
+FROM apache/airflow:2.5.1-python3.10
+
+# 🔐 루트 권한으로 OS 패키지 설치
+USER root
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    ffmpeg \
+    cmake \
+    ninja-build \
+    && apt-get clean
+
+# 필요한 디렉토리 미리 생성
+RUN mkdir -p /home/airflow/.cache/torch/hub/checkpoints \
+    && mkdir -p /home/airflow/.cache/voicefixer/analysis_module/checkpoints
+
+# requirements 먼저 복사 및 설치 (airflow 유저로 설치해야 함)
+COPY requirements.txt /requirements.txt
+
+# 🔁 airflow 유저로 변경
+USER airflow
+
+# ✅ requirements 설치 (airflow 유저 권한)
+RUN pip install --user --no-cache-dir -r /requirements.txt
+
+# 🔁 루트로 돌아가서 모델 파일 복사 (airflow 홈 디렉토리 접근 위해)
+USER root
+
+COPY pretrained_models/demucs/955717e8-8726e21a.th /home/airflow/.cache/torch/hub/checkpoints/
+COPY pretrained_models/vocalfixer/analysis_module/checkpoints/vf.ckpt /home/airflow/.cache/voicefixer/analysis_module/checkpoints/vf.ckpt
+# VoiceFixer - synthesis module
+COPY pretrained_models/vocalfixer/synthesis_module/44100/model.ckpt-1490000_trimed.pt /home/airflow/.cache/voicefixer/synthesis_module/44100/model.ckpt-1490000_trimed.pt
+# airflow 유저로 다시 전환
+USER airflow

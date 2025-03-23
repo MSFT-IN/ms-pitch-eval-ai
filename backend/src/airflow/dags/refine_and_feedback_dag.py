@@ -5,7 +5,7 @@ from airflow.utils.dates import days_ago
 from sensors.blob_json_sensor import AzureBlobJsonSensor
 from tasks.blob_tasks import download_blob, upload_blob
 from tasks.run_stt import refine_stt
-from generate_content_feedback import generate_content_feedback
+from tasks.generate_content_feedback import generate_content_feedback
 from dotenv import load_dotenv
 import os
 import json
@@ -19,7 +19,7 @@ STT_CONTAINER = os.getenv("STT_CONTAINER", "silver")
 FEEDBACK_CONTAINER = os.getenv("CONTENT_FEEDBACK_CONTAINER", "gold_content")
 
 # 환경 변수 로드 확인
-if not (AZURE_CONN_STR or STT_CONTAINER or FEEDBACK_CONTAINE):
+if not (AZURE_CONN_STR or STT_CONTAINER or FEEDBACK_CONTAINER):
     raise ValueError("env load error")
 
 # DAG 기본 설정 (필수임)

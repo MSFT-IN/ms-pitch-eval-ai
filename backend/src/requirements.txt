@@ -8,14 +8,14 @@ apache-airflow-providers-redis
 azure-storage-blob==12.16.0
 
 # 오디오 및 시각화
-librosa==0.10.0.post2
+librosa
 matplotlib==3.7.1
 numpy==1.24.3
+resampy
 
 # 쓸일있을것같음
 pandas==1.5.3
 requests==2.31.0
-
 # Suzy Minkyung DAG
 dotenv
 requests
@@ -28,3 +28,10 @@ azure-identity
 
 
 # Refine_Wav
+torch==2.6.0
+torchaudio==2.6.0
+soundfile==0.13.1
+pyworld==0.3.5
+praat-parselmouth==0.4.5
+demucs==4.0.1
+voicefixer==0.1.3

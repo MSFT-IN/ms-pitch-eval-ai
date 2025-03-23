@@ -2,9 +2,6 @@ from voicefixer import VoiceFixer
 import os
 
 
-print("VoiceFixer 모델로드중")    
-vf = VoiceFixer()
-
 
 
 def voicefixer_enhance(input_wav, output_wav=None):
@@ -24,8 +21,10 @@ def voicefixer_enhance(input_wav, output_wav=None):
     if output_wav is None:
         base, ext = os.path.splitext(os.path.basename(input_wav))
         output_wav = f"{base}_enhanced.wav"
-    
+    print("VoiceFixer 모델로드중")    
+
     vf = VoiceFixer()
+
     print("VoiceFixer로 업샘플링 + 복원 중...")
     vf.restore(input=input_wav, output=output_wav)
     print(f" 완료: {output_wav}")

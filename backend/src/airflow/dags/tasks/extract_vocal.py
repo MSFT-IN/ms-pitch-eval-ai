@@ -1,17 +1,21 @@
+from fileinput import filename
 import os
 import torchaudio
 import torch
 from demucs.pretrained import get_model
 from demucs.apply import apply_model
 
-print("Demucs 모델 로드 중...")
-model = get_model('htdemucs')
+
 
 def demucs_separate_v2(input_wav, output_dir="."):
     """
     Demucs 모델로 목소리만 추출해서 저장 (기본: 현재 경로)
     output 파일: <입력파일명>_vocal.wav
     """
+    
+    print("Demucs 모델 로드 중...")
+    model = get_model('htdemucs')
+
     print("오디오 로딩 중...")
     mixture, sr = torchaudio.load(input_wav)
 
