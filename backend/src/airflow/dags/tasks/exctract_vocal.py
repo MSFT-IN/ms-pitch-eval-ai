@@ -1,5 +1,6 @@
 import os
 import torchaudio
+import torch
 from demucs.pretrained import get_model
 from demucs.apply import apply_model
 
