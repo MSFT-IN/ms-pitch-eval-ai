@@ -176,3 +176,7 @@ evalai_venv/
 *.wav
 =======
 src/airflow/logs/
+
+
+#test.file
+*.ipynb

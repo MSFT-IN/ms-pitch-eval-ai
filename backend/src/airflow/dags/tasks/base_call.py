@@ -6,7 +6,7 @@ import time
 
 
 
-dotenv.load_dotenv(override = True)
+dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), '../../../.env'))
 AOAI_ENDPOINT_GPT = os.getenv("AOAI_ENDPOINT_GPT")
 AOAI_ENDPOINT_GPT_0513 = os.getenv("AOAI_ENDPOINT_GPT_0513")
 AOAI_ENDPOINT_WHISPER = os.getenv("AOAI_ENDPOINT_WHISPER")
@@ -61,11 +61,22 @@ def call_stt(audio_file_path):
 
     * Uses Azure AI Services Speech SDK
     """
+    SPEECH_KEY = os.getenv("AI_SERVICES_SPEECH_KEY")
+    SERVICES_REGION = os.getenv("AI_SERVICES_SPEECH_REGION")
+    AUDIO_FILE = audio_file_path
     
-    # Configure speech recognizer
-    speech_config = speechsdk.SpeechConfig(subscription=AI_SERVICES_SPEECH_KEY, region=AI_SERVICES_SPEECH_REGION)
+    if not AUDIO_FILE.lower().endswith(".wav"):
+        raise ValueError("Only .wav files are allowed.")
+    # set speech config
+    speech_config = speechsdk.SpeechConfig(
+        subscription=SPEECH_KEY, 
+        region=SERVICES_REGION
+    )
+    
     speech_config.speech_recognition_language = "ko-KR"
-    audio_config = speechsdk.audio.AudioConfig(filename=audio_file_path)
+ 
+    # set audio config
+    audio_config = speechsdk.audio.AudioConfig(filename=AUDIO_FILE)
 
     speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config, audio_config=audio_config)
 

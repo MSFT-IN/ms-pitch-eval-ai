@@ -5,13 +5,11 @@ import sys
 sys.path.append(os.path.dirname(__file__))
 from base_call import call_gpt, call_stt
 
-dotenv.load_dotenv(override = True)
-
-AUDIO_FILE_PATH = os.getenv("AUDIO_FILE_PATH")
-AUDIO_FILE_NAME = os.getenv("AUDIO_FILE_NAME")
+dotenv.load_dotenv(os.path.join(os.path.dirname(__file__), '../../../.env'))
 
 
-def run_basic_stt():
+
+def run_basic_stt(download_path):
     """
     Function to run STT.
     Args:
@@ -22,7 +20,7 @@ def run_basic_stt():
     """
 
     # STT
-    recognized_text, recognized_chunks = call_stt(AUDIO_FILE_PATH + AUDIO_FILE_NAME)
+    recognized_text, recognized_chunks = call_stt(download_path)
     print(f"Recognized Text: {recognized_text}")
     
     return recognized_text, recognized_chunks
