@@ -59,7 +59,7 @@ def process_new_mp3_files(**context):
     # Task Instance rkwudhrl (Xcom 데이터 접근 위해)
     ti = context['ti']
     # 'check_new_mp3_files' 센서 태스크에서 푸시된 mp3 파일 목록 가져오기
-    new_files = ti.xcom_pull(key = 'new_mp3_files', task_ids= 'check_new_mp3_files')
+    new_files = ti.xcom_pull(key = 'new_wav_files', task_ids= 'check_new_wav_files')
     # 새파일 없으면 함 수 종료료
     if not new_files:
         return
@@ -70,7 +70,7 @@ def process_new_mp3_files(**context):
         download_blob(AZURE_CONN_STR, MP3_CONTAINER, blob_name, download_path)
 
         #2. 스펙토그램 이미지로 변환 
-        specto_path = download_path.replace(".mp3", ".png")
+        specto_path = download_path.replace(".wav", ".png")
         convert_mp3_to_spectrogram(download_path, specto_path)
 
         #3.Silver Blob에 업로드 
@@ -83,7 +83,7 @@ def process_new_mp3_files(**context):
 
 
 check_new_mp3_files = AzureBlobWavSensor(
-    task_id = "check_new_mp3_files",
+    task_id = "check_new_wav_files",
     connection_str= AZURE_CONN_STR,
     container_name = MP3_CONTAINER,
     poke_interval=60,
