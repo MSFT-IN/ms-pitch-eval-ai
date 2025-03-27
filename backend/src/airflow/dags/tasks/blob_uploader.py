@@ -6,8 +6,10 @@ from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient, ContainerClient, BlobBlock, BlobClient, StandardBlobTier
 from flask import Flask, request, jsonify
 
+
+
 def upload_wav_stream_to_blob(file, filename: str):
-    load_dotenv()  # to load variables from .env
+    load_dotenv(os.path.join(os.path.dirname(__file__), '../../../.env'))
 
     # set variables
     ACCOUNT_URL = os.getenv("BLOB_ACCOUNT_URL")

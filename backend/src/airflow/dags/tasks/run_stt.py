@@ -71,8 +71,12 @@ def refine_stt(pitch_purpose, recognized_chunks):
 
     for chunk in recognized_chunks:
         refined_chunk = call_gpt_for_refinement(pitch_purpose, chunk)
-        refined_chunks.append(refined_chunk)
-        refined_text += refined_chunk + " "
+        if refined_chunk != None:            
+            refined_chunks.append(refined_chunk)
+            refined_text += refined_chunk + " "
+        else:
+            refined_chunks.append(chunk)
+            refined_text += chunk + " "
     
     return refined_text, refined_chunks
 

@@ -1,8 +1,6 @@
 import os
 import numpy as np
 from azure.storage.blob import BlobServiceClient
-
-
 import os
 import time
 

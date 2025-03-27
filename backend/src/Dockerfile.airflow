@@ -28,7 +28,9 @@ USER root
 
 COPY pretrained_models/demucs/955717e8-8726e21a.th /home/airflow/.cache/torch/hub/checkpoints/
 COPY pretrained_models/vocalfixer/analysis_module/checkpoints/vf.ckpt /home/airflow/.cache/voicefixer/analysis_module/checkpoints/vf.ckpt
+
 # VoiceFixer - synthesis module
 COPY pretrained_models/vocalfixer/synthesis_module/44100/model.ckpt-1490000_trimed.pt /home/airflow/.cache/voicefixer/synthesis_module/44100/model.ckpt-1490000_trimed.pt
+
 # airflow 유저로 다시 전환
 USER airflow

@@ -31,7 +31,7 @@ class AzureBlobJsonSensor(BaseSensorOperator):
                     new_files.append(blob.name)
 
         if new_files: 
-            context['ti'].xcom_push(key='new_json_files', values = new_files)
+            context['ti'].xcom_push(key='new_json_files', value = new_files)
             self.log.info("Found new json files: %s", new_files)
             return True
         else: 

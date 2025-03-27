@@ -2,10 +2,11 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from continuous_recognition import extract_data
-from blob_uploader import upload_wav_stream_to_blob
+# from airflow.dags.tasks.blob_uploader import upload_wav_stream_to_blob
+from airflow.dags.tasks.blob_tasks import upload_blob
 
-load_dotenv()  # to load variables from .env
+# load_dotenv()  # to load variables from .env
+load_dotenv(os.path.join(os.path.dirname(__file__), '../../.env'))
 
 # flask app config
 app = Flask(__name__)
@@ -15,13 +16,20 @@ CORS(app)
 def upload_wav():
     file = request.files.get('file')
     if file:
-        upload_url = upload_wav_stream_to_blob(file, file.filename)
-        return jsonify({"success": True, "url": upload_url})
+        CONN_STR = os.getenv("AZURE_CONN_STR")
+        CONTAINER_NAME = os.getenv("WAV_CONTAINER")
+        FILE_PATH = os.getenv("FILE_PATH")
+        BLOB_NAME = os.getenv("BLOB_NAME")
+        
+        upload_blob(CONN_STR, CONTAINER_NAME, FILE_PATH, BLOB_NAME)
+        
+        # upload_url = upload_wav_stream_to_blob(file, file.filename)
+        return jsonify({"success": True})
     else:
         return jsonify({"error": 400})
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5001)
 
 """
 # recognition test

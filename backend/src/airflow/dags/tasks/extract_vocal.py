@@ -18,6 +18,10 @@ def demucs_separate_v2(input_wav, output_dir="."):
 
     print("오디오 로딩 중...")
     mixture, sr = torchaudio.load(input_wav)
+    # 1채널이면 2채널(stereo)로 변환
+    if mixture.shape[0] == 1:
+        print("⚠️ 입력이 Mono입니다. Stereo로 변환합니다.")
+        mixture = mixture.repeat(2, 1)    
 
     x = mixture.unsqueeze(0).float()  # Demucs는 float32 입력 필요
 
